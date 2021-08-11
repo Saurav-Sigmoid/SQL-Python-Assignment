@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 # Solution for problem statement1
+
 def solution1(cur):
     # Assumed that not give query if manager is not present if otherwise use the below statement
     # cur.execute("select e.empno,e.ename,m.ename from emp as e left join emp as m on e.mgr=m.empno")
@@ -20,8 +21,10 @@ def solution1(cur):
 
 
 # Solution for problem statement2
+
 def solution2(cur):
     # Solution for the given table for the current date as end date was not specified
+    #From 28-33 Solution will not work if emp work split you can use without groupby because it will give split jobs
     cur.execute(
         "select e.empno,e.ename,d.dname,comms.comm*comms.mon,comms.mon "
         "from (select empno,Cast(((Cast (Current_date-min(startdate) as float))/365.0*12) as Int) as mon,"
@@ -33,6 +36,7 @@ def solution2(cur):
                  header=["Emp Name", "Emp No", "Dept Name", "Total Compensation", "Months Spent in Organization"],
                  index=False)
     # Also saving into the csv format as it pgadmin does not have an excel import statement
+    #
     df2.to_csv('c.csv',
                header=["Emp Name", "Emp No", "Dept Name", "Total Compensation", "Months Spent in Organization"],
                index=False)
@@ -40,6 +44,7 @@ def solution2(cur):
 # Solution for problem statement3
 def solution3(cur):
     #Table is create in the pgadmin folder as commpen
+    # From 48-49  Should  have  to read excel first then convert to csv 
     cur.execute("COPY commpen FROM '/Users/sauravvarma/PycharmProjects/pythonProject/Assignments/c.csv' "
                 "DELIMITER ',' CSV HEADER;")
 
@@ -75,10 +80,13 @@ def connect():
 
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
+        
+        # Should use logging
         print(error)
     finally:
         if conn is not None:
             conn.close()
+            #Should use logging
             print('Database connection closed.')
             return 2
 
